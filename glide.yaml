@@ -1,0 +1,6 @@
+package: github.com/giantswarm/exporterkit
+import:
+- package: github.com/giantswarm/microkit
+  version: 8081cd79373ce7175be0f13ddef5b546521c2a06
+  subpackages:
+  - logger
