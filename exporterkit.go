@@ -1,6 +1,7 @@
 package exporterkit
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -22,6 +23,7 @@ type Exporter struct {
 	logger     micrologger.Logger
 }
 
+// New creates a new Exporter, given a Config.
 func New(config Config) (*Exporter, error) {
 	if config.Collectors == nil {
 		return nil, microerror.Maskf(InvalidConfigError, "%T.Collectors must not be empty", config)
@@ -38,9 +40,15 @@ func New(config Config) (*Exporter, error) {
 	return &exporter, nil
 }
 
+// Run starts the Exporter.
 func (e *Exporter) Run() {
 	prometheus.MustRegister(e.collectors...)
 
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe("localhost:8000", nil)
+	http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "ok\n")
+	}))
+
+	http.ListenAndServe("0.0.0.0:8000", nil)
 }
