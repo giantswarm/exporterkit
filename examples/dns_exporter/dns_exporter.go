@@ -35,10 +35,10 @@ type DNSCollector struct {
 
 func NewDNSCollector(config Config) (*DNSCollector, error) {
 	if config.Hosts == nil {
-		return nil, microerror.Maskf(exporterkit.InvalidConfigError, "%T.Hosts must not be empty", config)
+		return nil, microerror.Maskf(invalidConfigError, "%T.Hosts must not be empty", config)
 	}
 	if config.Logger == nil {
-		return nil, microerror.Maskf(exporterkit.InvalidConfigError, "%T.Logger must not be empty", config)
+		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
 
 	dnsCollector := DNSCollector{

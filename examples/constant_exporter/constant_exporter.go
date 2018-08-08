@@ -26,7 +26,7 @@ type ConstantCollector struct {
 
 func NewConstantCollector(config Config) (*ConstantCollector, error) {
 	if config.Logger == nil {
-		return nil, microerror.Maskf(exporterkit.InvalidConfigError, "%T.Logger must not be empty", config)
+		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
 
 	constantCollector := ConstantCollector{

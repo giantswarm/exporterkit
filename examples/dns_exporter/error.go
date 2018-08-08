@@ -1,4 +1,4 @@
-package exporterkit
+package main
 
 import (
 	"github.com/giantswarm/microerror"
