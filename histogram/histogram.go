@@ -1,5 +1,5 @@
 // Package histogram provides primitives for working with histograms,
-// particularly towards Prometheus exporters.
+// particularly towards building Prometheus exporters.
 package histogram
 
 import (
@@ -26,7 +26,7 @@ type Histogram struct {
 
 func New(config Config) (*Histogram, error) {
 	if len(config.BucketLimits) == 0 {
-		return nil, microerror.Maskf(invalidConfigError, "%T.Buckets must not be empty", config)
+		return nil, microerror.Maskf(invalidConfigError, "%T.BucketLimits must not be empty", config)
 	}
 
 	buckets := map[float64]uint64{}
