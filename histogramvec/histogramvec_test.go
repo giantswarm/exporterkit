@@ -3,6 +3,7 @@ package histogramvec
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -328,4 +329,27 @@ func Test_Ensure(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Test_Concurrency tests that concurrent access to a HistogramVec is safe.
+func Test_Concurrency(t *testing.T) {
+	c := Config{
+		BucketLimits: []float64{1},
+	}
+	hv, err := New(c)
+	if err != nil {
+		t.Fatalf("expected nil, got %v", err)
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			hv.Add("foo", 1)
+			hv.Ensure([]string{})
+		}()
+	}
+
+	wg.Wait()
 }

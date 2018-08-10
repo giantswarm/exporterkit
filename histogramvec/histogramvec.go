@@ -3,6 +3,8 @@
 package histogramvec
 
 import (
+	"sync"
+
 	"github.com/giantswarm/exporterkit/histogram"
 	"github.com/giantswarm/microerror"
 )
@@ -22,6 +24,8 @@ type HistogramVec struct {
 
 	// histograms is a mapping between labels and the Histograms that the HistogramVec manages.
 	histograms map[string]*histogram.Histogram
+	// mutex controls access to the histograms map, to allow for safe concurrent access.
+	mutex sync.Mutex
 }
 
 func New(config Config) (*HistogramVec, error) {
@@ -41,6 +45,9 @@ func New(config Config) (*HistogramVec, error) {
 // Add saves an entry to the Histogram with the given label,
 // creating it internally if required.
 func (hv *HistogramVec) Add(label string, x float64) error {
+	hv.mutex.Lock()
+	defer hv.mutex.Unlock()
+
 	if _, ok := hv.histograms[label]; !ok {
 		c := histogram.Config{
 			BucketLimits: hv.bucketLimits,
@@ -62,6 +69,9 @@ func (hv *HistogramVec) Add(label string, x float64) error {
 // Ensure removes any internal Histograms that aren't in the given slice of labels.
 // This is useful when a label is no longer being recorded, such as in dynamic systems.
 func (hv *HistogramVec) Ensure(labels []string) {
+	hv.mutex.Lock()
+	defer hv.mutex.Unlock()
+
 	for existingLabel := range hv.histograms {
 		labelRequested := false
 
