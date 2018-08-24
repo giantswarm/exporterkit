@@ -2,18 +2,20 @@ package exporterkit
 
 import (
 	"fmt"
-	"net/http"
+	"os"
+	"os/signal"
+	"sync"
 
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
+	"github.com/giantswarm/microendpoint/endpoint/healthz"
 	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/microkit/server"
 	"github.com/giantswarm/micrologger"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 const (
 	// DefaultAddress is the address the Exporter will run on if no address is configured.
-	DefaultAddress = "0.0.0.0:8000"
+	DefaultAddress = "http://0.0.0.0:8000"
 )
 
 // Config if the configuration to create an Exporter.
@@ -54,15 +56,54 @@ func New(config Config) (*Exporter, error) {
 
 // Run starts the Exporter.
 func (e *Exporter) Run() {
-	e.logger.Log("level", "info", "message", fmt.Sprintf("starting exporter on %s", e.address))
+	var err error
+
+	var healthzEndpoint *healthz.Endpoint
+	{
+		c := healthz.Config{
+			Logger: e.logger,
+		}
+		healthzEndpoint, err = healthz.New(c)
+		if err != nil {
+			panic(fmt.Sprintf("%#v\n", err))
+		}
+	}
+
+	var newServer server.Server
+	{
+		c := server.Config{
+			Logger:        e.logger,
+			Endpoints:     []server.Endpoint{healthzEndpoint},
+			ListenAddress: e.address,
+		}
+
+		newServer, err = server.New(c)
+		if err != nil {
+			panic(fmt.Sprintf("%#v\n", err))
+		}
+	}
 
 	prometheus.MustRegister(e.collectors...)
 
-	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "ok\n")
-	}))
+	go newServer.Boot()
 
-	http.ListenAndServe(e.address, nil)
+	listener := make(chan os.Signal, 2)
+	signal.Notify(listener, os.Interrupt, os.Kill)
+
+	<-listener
+
+	go func() {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			newServer.Shutdown()
+		}()
+
+		os.Exit(0)
+	}()
+
+	<-listener
+
+	os.Exit(0)
 }
