@@ -11,14 +11,21 @@ import (
 	"github.com/giantswarm/micrologger"
 )
 
+const (
+	// DefaultAddress is the address the Exporter will run on if no address is configured.
+	DefaultAddress = "0.0.0.0:8000"
+)
+
 // Config if the configuration to create an Exporter.
 type Config struct {
+	Address    string
 	Collectors []prometheus.Collector
 	Logger     micrologger.Logger
 }
 
 // Exporter runs a slice of Prometheus Collectors.
 type Exporter struct {
+	address    string
 	collectors []prometheus.Collector
 	logger     micrologger.Logger
 }
@@ -32,7 +39,12 @@ func New(config Config) (*Exporter, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
 
+	if config.Address == "" {
+		config.Address = DefaultAddress
+	}
+
 	exporter := Exporter{
+		address:    config.Address,
 		collectors: config.Collectors,
 		logger:     config.Logger,
 	}
@@ -42,6 +54,8 @@ func New(config Config) (*Exporter, error) {
 
 // Run starts the Exporter.
 func (e *Exporter) Run() {
+	e.logger.Log("level", "info", "message", fmt.Sprintf("starting exporter on %s", e.address))
+
 	prometheus.MustRegister(e.collectors...)
 
 	http.Handle("/metrics", promhttp.Handler())
@@ -50,5 +64,5 @@ func (e *Exporter) Run() {
 		fmt.Fprintf(w, "ok\n")
 	}))
 
-	http.ListenAndServe("0.0.0.0:8000", nil)
+	http.ListenAndServe(e.address, nil)
 }
