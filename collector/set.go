@@ -75,7 +75,6 @@ func (s *Set) Collect(ch chan<- prometheus.Metric) {
 		err := c.Collect(ch)
 		if err != nil {
 			s.logger.Log("level", "error", "message", "failed collecting metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
-			return
 		}
 	}
 
@@ -89,7 +88,6 @@ func (s *Set) Describe(ch chan<- *prometheus.Desc) {
 		err := c.Describe(ch)
 		if err != nil {
 			s.logger.Log("level", "error", "message", "failed describing metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
-			return
 		}
 	}
 
