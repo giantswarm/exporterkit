@@ -12,7 +12,7 @@ import (
 
 func Test_Collector_Set_Boot(t *testing.T) {
 	for i := 0; i < 100; i++ {
-		c, s, err := newCollectorAndSet()
+		s, err := newTestSet()
 		if err != nil {
 			t.Fatalf(err.Error())
 		}
@@ -33,72 +33,45 @@ func Test_Collector_Set_Boot(t *testing.T) {
 		}
 
 		wg.Wait()
-
-		if !c.gotBootedOnce() {
-			t.Fatalf("expected collector to be booted once")
-		}
 	}
 }
 
 //
-//
+// Below is the helper function to create a test Set.
 //
 
-func newCollectorAndSet() (*bootCountCollector, *Set, error) {
+func newTestSet() (*Set, error) {
 	var err error
-
-	var newCollector *bootCountCollector
-	{
-		newCollector = &bootCountCollector{}
-	}
 
 	var newSet *Set
 	{
 		c := SetConfig{
 			Collectors: []Interface{
-				newCollector,
+				&testCollector{},
 			},
 			Logger: microloggertest.New(),
 		}
 
 		newSet, err = NewSet(c)
 		if err != nil {
-			return nil, nil, microerror.Mask(err)
+			return nil, microerror.Mask(err)
 		}
 	}
 
-	return newCollector, newSet, nil
+	return newSet, nil
 }
 
 //
+// Below is the test collector implementation used to test the Set
+// initialization and Boot.
 //
-//
 
-type bootCountCollector struct {
-	bootCount int
-	mutex     sync.Mutex
-}
+type testCollector struct{}
 
-func (c *bootCountCollector) Boot(ctx context.Context) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	c.bootCount++
-
+func (c *testCollector) Collect(ch chan<- prometheus.Metric) error {
 	return nil
 }
 
-func (c *bootCountCollector) CollectWithError(ch chan<- prometheus.Metric) error {
+func (c *testCollector) Describe(ch chan<- *prometheus.Desc) error {
 	return nil
-}
-
-func (c *bootCountCollector) DescribeWithError(ch chan<- *prometheus.Desc) error {
-	return nil
-}
-
-func (c *bootCountCollector) gotBootedOnce() bool {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	return c.bootCount == 1
 }

@@ -63,13 +63,6 @@ func (s *Set) Boot(ctx context.Context) error {
 		}
 	}
 
-	for _, c := range s.collectors {
-		err := c.Boot(ctx)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	}
-
 	s.logger.Log("level", "debug", "message", "booted collector")
 
 	return nil
@@ -78,55 +71,29 @@ func (s *Set) Boot(ctx context.Context) error {
 func (s *Set) Collect(ch chan<- prometheus.Metric) {
 	s.logger.Log("level", "debug", "message", "collecting metrics")
 
-	err := s.CollectWithError(ch)
-	if err != nil {
-		s.logger.Log("level", "error", "message", "failed collecting metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
-		return
-	}
-
-	s.logger.Log("level", "debug", "message", "collected metrics")
-}
-
-func (s *Set) CollectWithError(ch chan<- prometheus.Metric) error {
-	s.logger.Log("level", "debug", "message", "collecting metrics")
-
 	for _, c := range s.collectors {
-		err := c.CollectWithError(ch)
+		err := c.Collect(ch)
 		if err != nil {
-			return microerror.Mask(err)
+			s.logger.Log("level", "error", "message", "failed collecting metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
+			return
 		}
 	}
 
 	s.logger.Log("level", "debug", "message", "collected metrics")
-
-	return nil
 }
 
 func (s *Set) Describe(ch chan<- *prometheus.Desc) {
 	s.logger.Log("level", "debug", "message", "describing metrics")
 
-	err := s.DescribeWithError(ch)
-	if err != nil {
-		s.logger.Log("level", "error", "message", "failed describing metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
-		return
-	}
-
-	s.logger.Log("level", "debug", "message", "described metrics")
-}
-
-func (s *Set) DescribeWithError(ch chan<- *prometheus.Desc) error {
-	s.logger.Log("level", "debug", "message", "describing metrics")
-
 	for _, c := range s.collectors {
-		err := c.DescribeWithError(ch)
+		err := c.Describe(ch)
 		if err != nil {
-			return microerror.Mask(err)
+			s.logger.Log("level", "error", "message", "failed describing metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
+			return
 		}
 	}
 
 	s.logger.Log("level", "debug", "message", "described metrics")
-
-	return nil
 }
 
 func (s *Set) isBooted() bool {
