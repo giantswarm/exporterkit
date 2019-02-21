@@ -67,3 +67,17 @@ func (h *Histogram) Sum() float64 {
 func (h *Histogram) Buckets() map[float64]uint64 {
 	return h.buckets
 }
+
+// Copy returns a copy of the Histogram.
+func (h *Histogram) Copy() Histogram {
+	newBuckets := map[float64]uint64{}
+	for k, v := range h.buckets {
+		newBuckets[k] = v
+	}
+
+	return Histogram{
+		count:   h.count,
+		sum:     h.sum,
+		buckets: newBuckets,
+	}
+}

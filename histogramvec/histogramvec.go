@@ -95,7 +95,8 @@ func (hv *HistogramVec) Histograms() map[string]*histogram.Histogram {
 	histogramCopy := map[string]*histogram.Histogram{}
 
 	for label, histogram := range hv.histograms {
-		histogramCopy[label] = histogram
+		newHistogram := histogram.Copy()
+		histogramCopy[label] = &newHistogram
 	}
 
 	return histogramCopy
