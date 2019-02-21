@@ -369,11 +369,11 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		writeWaitGroup.Add(1)
 
-		go func() {
+		go func(i int) {
 			defer writeWaitGroup.Done()
 
 			hv.Add(fmt.Sprintf("%v", i), float64(i))
-		}()
+		}(i)
 	}
 
 	var iterateWaitGroup sync.WaitGroup
