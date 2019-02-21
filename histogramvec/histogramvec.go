@@ -87,7 +87,16 @@ func (hv *HistogramVec) Ensure(labels []string) {
 	}
 }
 
-// Histograms returns the currently managed Histograms.
+// Histograms returns a copy of the currently managed Histograms.
 func (hv *HistogramVec) Histograms() map[string]*histogram.Histogram {
-	return hv.histograms
+	hv.mutex.Lock()
+	defer hv.mutex.Unlock()
+
+	histogramCopy := map[string]*histogram.Histogram{}
+
+	for label, histogram := range hv.histograms {
+		histogramCopy[label] = histogram
+	}
+
+	return histogramCopy
 }

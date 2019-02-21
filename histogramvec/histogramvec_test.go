@@ -353,3 +353,41 @@ func Test_Concurrency(t *testing.T) {
 
 	wg.Wait()
 }
+
+// Test_Multi_Write_Iteration_Concurrency tests that concurrent reading and
+// iterating of the histograms is safe.
+func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
+	c := Config{
+		BucketLimits: []float64{1},
+	}
+	hv, err := New(c)
+	if err != nil {
+		t.Fatalf("expected nil, got %v", err)
+	}
+
+	var writeWaitGroup sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		writeWaitGroup.Add(1)
+
+		go func() {
+			defer writeWaitGroup.Done()
+
+			hv.Add(fmt.Sprintf("%v", i), float64(i))
+		}()
+	}
+
+	var iterateWaitGroup sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		iterateWaitGroup.Add(1)
+
+		go func() {
+			defer iterateWaitGroup.Done()
+
+			for range hv.Histograms() {
+			}
+		}()
+	}
+
+	writeWaitGroup.Wait()
+	iterateWaitGroup.Wait()
+}
