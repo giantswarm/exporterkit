@@ -92,12 +92,12 @@ func (hv *HistogramVec) Histograms() map[string]*histogram.Histogram {
 	hv.mutex.Lock()
 	defer hv.mutex.Unlock()
 
-	histogramCopy := map[string]*histogram.Histogram{}
+	histogramsCopy := map[string]*histogram.Histogram{}
 
 	for label, histogram := range hv.histograms {
-		newHistogram := histogram.Copy()
-		histogramCopy[label] = &newHistogram
+		h := *histogram
+		histogramsCopy[label] = &h
 	}
 
-	return histogramCopy
+	return histogramsCopy
 }
