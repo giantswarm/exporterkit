@@ -24,7 +24,7 @@ type Histogram struct {
 	// buckets is a map of upper bounds to cumulative counts of entries,
 	// excluding the +Inf bucket.
 	buckets map[float64]uint64
-	// mutex controls access to the histogram map, to allow for safe concurrent access.
+	// mutex controls access to the buckets map, to allow for safe concurrent access.
 	mutex sync.Mutex
 }
 
