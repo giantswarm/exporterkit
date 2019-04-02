@@ -3,6 +3,7 @@ package histogram
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"testing"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -134,4 +135,64 @@ func Test_Add(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Test_Concurrency tests that concurrent access to a Histogram is safe.
+func Test_Concurrency(t *testing.T) {
+	c := Config{
+		BucketLimits: []float64{1},
+	}
+	h, err := New(c)
+	if err != nil {
+		t.Fatalf("expected nil, got %v", err)
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			h.Add(1)
+		}()
+	}
+
+	wg.Wait()
+}
+
+// Test_Multi_Write_Iteration_Concurrency tests that concurrent reading and
+// iterating of the histogram is safe.
+func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
+	c := Config{
+		BucketLimits: []float64{1},
+	}
+	h, err := New(c)
+	if err != nil {
+		t.Fatalf("expected nil, got %v", err)
+	}
+
+	var writeWaitGroup sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		writeWaitGroup.Add(1)
+
+		go func(i int) {
+			defer writeWaitGroup.Done()
+
+			h.Add(float64(i))
+		}(i)
+	}
+
+	var iterateWaitGroup sync.WaitGroup
+	for i := 0; i < 1000; i++ {
+		iterateWaitGroup.Add(1)
+
+		go func() {
+			defer iterateWaitGroup.Done()
+
+			for range h.Buckets() {
+			}
+		}()
+	}
+
+	writeWaitGroup.Wait()
+	iterateWaitGroup.Wait()
 }
