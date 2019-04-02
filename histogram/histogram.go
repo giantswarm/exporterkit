@@ -70,7 +70,7 @@ func (h *Histogram) Sum() float64 {
 	return h.sum
 }
 
-// Buckets returns the current buckets with their counts.
+// Buckets returns a copy of the current buckets with their counts.
 func (h *Histogram) Buckets() map[float64]uint64 {
 	h.mutex.Lock()
 	defer h.mutex.Unlock()
