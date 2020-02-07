@@ -45,7 +45,7 @@ func Example() {
 
 	// Add the samples to the HistogramVec.
 	for _, s := range firstSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		hv.Add(s.Temperature, s.StoreName)
 	}
 
 	// Emit each metric, such as in a Prometheus Collector.
@@ -74,14 +74,14 @@ func Example() {
 
 	// Add the second set of sample to the HistogramVec.
 	for _, s := range secondSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		hv.Add(s.Temperature, s.StoreName)
 	}
 
 	// Ensure that any stores that have shut down are removed from the HistogramVec.
 	// This should be done on every sampling (ommitted earlier for clarity).
-	storeNames := []string{}
+	storeNames := [][]string{}
 	for _, s := range secondSamples {
-		storeNames = append(storeNames, s.StoreName)
+		storeNames = append(storeNames, []string{s.StoreName})
 	}
 	hv.Ensure(storeNames)
 
@@ -100,7 +100,7 @@ func Example() {
 
 func Test_Add(t *testing.T) {
 	type addInput struct {
-		label  string
+		labels []string
 		sample float64
 	}
 	type histogram struct {
@@ -122,7 +122,7 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 			},
@@ -144,11 +144,11 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					labels: []string{"bar"},
 					sample: 2,
 				},
 			},
@@ -177,15 +177,15 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					labels: []string{"bar"},
 					sample: 2,
 				},
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 2,
 				},
 			},
@@ -206,6 +206,61 @@ func Test_Add(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name: "case 4: Add 1 input to one multidimensional histogram",
+			config: Config{
+				BucketLimits: []float64{5},
+			},
+			addInput: []addInput{
+				{
+					labels: []string{"foo", "bar"},
+					sample: 1,
+				},
+			},
+			expectedHistograms: map[string]histogram{
+				"foo-bar": {
+					count: 1,
+					sum:   1,
+					buckets: map[float64]uint64{
+						5: 1,
+					},
+				},
+			},
+		},
+
+		{
+			name: "case 4: Add 1 input to 2 multidimensional histograms",
+			config: Config{
+				BucketLimits: []float64{5},
+			},
+			addInput: []addInput{
+				{
+					labels: []string{"foo", "bar"},
+					sample: 1,
+				},
+				{
+					labels: []string{"baz", "rancher"},
+					sample: 1,
+				},
+			},
+			expectedHistograms: map[string]histogram{
+				"foo-bar": {
+					count: 1,
+					sum:   1,
+					buckets: map[float64]uint64{
+						5: 1,
+					},
+				},
+				"baz-rancher": {
+					count: 1,
+					sum:   1,
+					buckets: map[float64]uint64{
+						5: 1,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -216,7 +271,7 @@ func Test_Add(t *testing.T) {
 			}
 
 			for _, x := range tc.addInput {
-				if err := hv.Add(x.label, x.sample); err != nil {
+				if err := hv.Add(x.sample, x.labels...); err != nil {
 					t.Fatalf("expected nil, got %v", err)
 				}
 			}
@@ -241,7 +296,7 @@ func Test_Add(t *testing.T) {
 
 func Test_Ensure(t *testing.T) {
 	type addInput struct {
-		label  string
+		labels []string
 		sample float64
 	}
 
@@ -249,7 +304,7 @@ func Test_Ensure(t *testing.T) {
 		name           string
 		config         Config
 		addInput       []addInput
-		ensureLabels   []string
+		ensureLabels   [][]string
 		expectedLabels []string
 	}{
 		{
@@ -259,11 +314,11 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 			},
-			ensureLabels:   []string{},
+			ensureLabels:   [][]string{},
 			expectedLabels: []string{},
 		},
 
@@ -274,11 +329,11 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 			},
-			ensureLabels:   []string{"foo"},
+			ensureLabels:   [][]string{[]string{"foo"}},
 			expectedLabels: []string{"foo"},
 		},
 
@@ -289,16 +344,35 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					labels: []string{"foo"},
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					labels: []string{"bar"},
 					sample: 1,
 				},
 			},
-			ensureLabels:   []string{"foo"},
+			ensureLabels:   [][]string{[]string{"foo"}},
 			expectedLabels: []string{"foo"},
+		},
+
+		{
+			name: "case 3: Ensure multi dimensional histograms",
+			config: Config{
+				BucketLimits: []float64{5},
+			},
+			addInput: []addInput{
+				{
+					labels: []string{"foo", "bar"},
+					sample: 1,
+				},
+				{
+					labels: []string{"baz", "rancher"},
+					sample: 1,
+				},
+			},
+			ensureLabels:   [][]string{[]string{"foo", "bar"}, []string{"baz", "rancher"}},
+			expectedLabels: []string{"foo-bar", "baz-rancher"},
 		},
 	}
 
@@ -310,7 +384,7 @@ func Test_Ensure(t *testing.T) {
 			}
 
 			for _, x := range tc.addInput {
-				if err := hv.Add(x.label, x.sample); err != nil {
+				if err := hv.Add(x.sample, x.labels...); err != nil {
 					t.Fatalf("expected nil, got %v", err)
 				}
 			}
@@ -346,8 +420,8 @@ func Test_Concurrency(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			hv.Add("foo", 1)
-			hv.Ensure([]string{})
+			hv.Add(1, "foo")
+			hv.Ensure([][]string{})
 		}()
 	}
 
@@ -372,7 +446,7 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		go func(i int) {
 			defer writeWaitGroup.Done()
 
-			hv.Add(fmt.Sprintf("%v", i), float64(i))
+			hv.Add(float64(i), fmt.Sprintf("%v", i))
 		}(i)
 	}
 

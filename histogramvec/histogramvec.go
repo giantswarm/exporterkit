@@ -3,6 +3,7 @@
 package histogramvec
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/giantswarm/exporterkit/histogram"
@@ -44,9 +45,11 @@ func New(config Config) (*HistogramVec, error) {
 
 // Add saves an entry to the Histogram with the given label,
 // creating it internally if required.
-func (hv *HistogramVec) Add(label string, x float64) error {
+func (hv *HistogramVec) Add(x float64, labels ...string) error {
 	hv.mutex.Lock()
 	defer hv.mutex.Unlock()
+
+	label := hv.normaliseLabels(labels)
 
 	if _, ok := hv.histograms[label]; !ok {
 		c := histogram.Config{
@@ -68,14 +71,19 @@ func (hv *HistogramVec) Add(label string, x float64) error {
 
 // Ensure removes any internal Histograms that aren't in the given slice of labels.
 // This is useful when a label is no longer being recorded, such as in dynamic systems.
-func (hv *HistogramVec) Ensure(labels []string) {
+func (hv *HistogramVec) Ensure(labelSets [][]string) {
 	hv.mutex.Lock()
 	defer hv.mutex.Unlock()
+
+	normalizedLabels := []string{}
+	for _, labels := range labelSets {
+		normalizedLabels = append(normalizedLabels, hv.normaliseLabels(labels))
+	}
 
 	for existingLabel := range hv.histograms {
 		labelRequested := false
 
-		for _, requestedLabel := range labels {
+		for _, requestedLabel := range normalizedLabels {
 			if requestedLabel == existingLabel {
 				labelRequested = true
 			}
@@ -100,4 +108,8 @@ func (hv *HistogramVec) Histograms() map[string]*histogram.Histogram {
 	}
 
 	return histogramsCopy
+}
+
+func (hv *HistogramVec) normaliseLabels(labels []string) string {
+	return strings.Join(labels, "-")
 }
