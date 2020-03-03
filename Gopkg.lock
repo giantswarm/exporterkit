@@ -18,15 +18,15 @@
   version = "v1.4.7"
 
 [[projects]]
-  branch = "master"
-  digest = "1:bcf7cab60e36c24a5f655b723befdff105cef16c0c95b23e1c6da0d33d4c900c"
+  branch = "go-modules"
+  digest = "1:9dcf61abc3db8f360cb7a1b54f63a371ad49f7b18ba68eadd2308841652674ab"
   name = "github.com/giantswarm/microendpoint"
   packages = [
     "endpoint/healthz",
     "service/healthz",
   ]
   pruneopts = "UT"
-  revision = "f77c569259aef9cea5e38d0d7d94bf1d7d07d136"
+  revision = "c2c5b3af4bdbf26b692c037bd5e9e6db21a64fd5"
 
 [[projects]]
   branch = "master"
@@ -37,19 +37,18 @@
   revision = "3bc3cb1a36700aa4bbfcf6c335bc2ab92ad66d8d"
 
 [[projects]]
-  branch = "master"
-  digest = "1:ae978037ecf0a99551443cd0138943efb5f0549c5ea890251c6ead61dccfe25b"
+  branch = "micrologger-0-1-0"
+  digest = "1:133a7905737f10fdc816766812b29fa33f554afb4d9d1101f74cf425add9ebf8"
   name = "github.com/giantswarm/microkit"
   packages = [
     "server",
     "tls",
   ]
   pruneopts = "UT"
-  revision = "ae70e65c60f81ba9442376702b7666b261a1895a"
+  revision = "7c0ae67f84b119e006019d2d23bc8bb99d6b3454"
 
 [[projects]]
-  branch = "master"
-  digest = "1:4ddd1df6c63413a6686c91013ff2d7646fd0a51f507c820c87dd1be419abaadc"
+  digest = "1:c497795cf3848ef5a655d53f24dfc670c72f9b2fc41eeda495d66542ae6bd017"
   name = "github.com/giantswarm/micrologger"
   packages = [
     ".",
@@ -57,7 +56,8 @@
     "microloggertest",
   ]
   pruneopts = "UT"
-  revision = "22dc3b5565d150e1f94fbed50df3baf6cd40fac9"
+  revision = "c87486c7d20d7878ad57a09d379d7d59328b472e"
+  version = "v0.1.0"
 
 [[projects]]
   digest = "1:83a37f3bd4ccd13469775ef771e943e6c7cfaba6926decff6c83135e56512f08"
