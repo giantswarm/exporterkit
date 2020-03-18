@@ -28,26 +28,26 @@
 
 [[override]]
   name = "github.com/giantswarm/microerror"
-  version = "=v0.1.0"
+  version = "~0.1.0"
 
 [[override]]
   name = "github.com/giantswarm/micrologger"
-  version = "=v0.1.0"
+  version = "~0.1.0"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/giantswarm/microkit"
+  version = "~0.1.0"
 
 [[constraint]]
   name = "github.com/prometheus/client_golang"
   version = "0.9.3"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/sync"
 
 
 
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  branch = "master"
-  name = "golang.org/x/sync"
