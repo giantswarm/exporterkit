@@ -6,10 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/giantswarm/exporterkit"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/giantswarm/exporterkit"
 )
 
 const (

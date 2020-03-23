@@ -5,8 +5,9 @@ package histogramvec
 import (
 	"sync"
 
-	"github.com/giantswarm/exporterkit/histogram"
 	"github.com/giantswarm/microerror"
+
+	"github.com/giantswarm/exporterkit/histogram"
 )
 
 type Config struct {
