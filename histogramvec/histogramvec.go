@@ -5,8 +5,9 @@ package histogramvec
 import (
 	"sync"
 
-	"github.com/giantswarm/exporterkit/histogram"
 	"github.com/giantswarm/microerror"
+
+	"github.com/giantswarm/exporterkit/histogram"
 )
 
 type Config struct {
@@ -94,9 +95,8 @@ func (hv *HistogramVec) Histograms() map[string]*histogram.Histogram {
 
 	histogramsCopy := map[string]*histogram.Histogram{}
 
-	for label, histogram := range hv.histograms {
-		h := *histogram
-		histogramsCopy[label] = &h
+	for l, h := range hv.histograms {
+		histogramsCopy[l] = h.Copy()
 	}
 
 	return histogramsCopy

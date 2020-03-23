@@ -60,16 +60,6 @@ func (h *Histogram) Add(x float64) {
 	}
 }
 
-// Count returns the number of samples recorded.
-func (h *Histogram) Count() uint64 {
-	return uint64(h.count)
-}
-
-// Buckets returns the sum of all samples recorded.
-func (h *Histogram) Sum() float64 {
-	return h.sum
-}
-
 // Buckets returns a copy of the current buckets with their counts.
 func (h *Histogram) Buckets() map[float64]uint64 {
 	h.mutex.Lock()
@@ -82,4 +72,27 @@ func (h *Histogram) Buckets() map[float64]uint64 {
 	}
 
 	return bucketsCopy
+}
+
+// Count returns the number of samples recorded.
+func (h *Histogram) Count() uint64 {
+	return uint64(h.count)
+}
+
+func (h *Histogram) Copy() *Histogram {
+	buckets := map[float64]uint32{}
+	for k, v := range h.Buckets() {
+		buckets[k] = uint32(v)
+	}
+
+	return &Histogram{
+		count:   uint32(h.Count()),
+		buckets: buckets,
+		sum:     h.Sum(),
+	}
+}
+
+// Buckets returns the sum of all samples recorded.
+func (h *Histogram) Sum() float64 {
+	return h.sum
 }
