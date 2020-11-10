@@ -70,8 +70,6 @@ func (s *Set) Boot(ctx context.Context) error {
 }
 
 func (s *Set) Collect(ch chan<- prometheus.Metric) {
-	s.logger.Log("level", "debug", "message", "collecting metrics")
-
 	var g errgroup.Group
 
 	for _, item := range s.collectors {
@@ -91,8 +89,6 @@ func (s *Set) Collect(ch chan<- prometheus.Metric) {
 	if err != nil {
 		s.logger.Log("level", "error", "message", "failed collecting metrics", "stack", fmt.Sprintf("%#v", microerror.Mask(err)))
 	}
-
-	s.logger.Log("level", "debug", "message", "collected metrics")
 }
 
 func (s *Set) Describe(ch chan<- *prometheus.Desc) {
