@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
+### Fixed
 
-- Stop logging debug messages when metrics are collected.
+- Reduce noisy debug logging when metrics are collected.
 
 ## [0.2.0] 2020-03-23
 
