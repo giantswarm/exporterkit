@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add method to stop collector after is has been booted.
+
 ### Fixed
 
 - Reduce noisy debug logging when metrics are collected.
