@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add method to stop collector after is has been booted.
+- Add `Set.Stop` method to stop collector after is has been booted.
 
 ### Fixed
 
