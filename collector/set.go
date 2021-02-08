@@ -87,7 +87,7 @@ func (s *Set) Stop(ctx context.Context) {
 		}
 	}
 
-	s.logger.Log("level", "debug", "message", "stopped collector")
+	s.logger.LogCtx(ctx, "level", "debug", "message", "stopped collector")
 
 	return
 }
