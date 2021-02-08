@@ -69,6 +69,29 @@ func (s *Set) Boot(ctx context.Context) error {
 	return nil
 }
 
+func (s *Set) Stop(ctx context.Context) {
+	s.logger.Log("level", "debug", "message", "stopping collector")
+
+	if !s.isBooted() {
+		return
+	}
+
+	{
+		s.logger.LogCtx(ctx, "level", "debug", "message", "unregistering collector")
+
+		registered := prometheus.Unregister(s)
+		if !registered {
+			s.logger.LogCtx(ctx, "level", "debug", "message", "collector was not registered")
+		} else {
+			s.logger.LogCtx(ctx, "level", "debug", "message", "unregistered collector")
+		}
+	}
+
+	s.logger.LogCtx(ctx, "level", "debug", "message", "stopped collector")
+
+	return
+}
+
 func (s *Set) Collect(ch chan<- prometheus.Metric) {
 	var g errgroup.Group
 
