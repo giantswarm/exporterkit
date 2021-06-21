@@ -53,7 +53,7 @@ func (h *Histogram) Add(x float64) {
 	h.count++
 	h.sum += x
 
-	for bucket, _ := range h.buckets {
+	for bucket := range h.buckets {
 		if x <= bucket {
 			h.buckets[bucket]++
 		}
