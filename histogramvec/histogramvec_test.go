@@ -45,7 +45,8 @@ func Example() {
 
 	// Add the samples to the HistogramVec.
 	for _, s := range firstSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		err := hv.Add(s.StoreName, s.Temperature)
+		fmt.Println(err)
 	}
 
 	// Emit each metric, such as in a Prometheus Collector.
@@ -74,7 +75,8 @@ func Example() {
 
 	// Add the second set of sample to the HistogramVec.
 	for _, s := range secondSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		err := hv.Add(s.StoreName, s.Temperature)
+		fmt.Println(err)
 	}
 
 	// Ensure that any stores that have shut down are removed from the HistogramVec.
@@ -320,7 +322,7 @@ func Test_Ensure(t *testing.T) {
 			hs := hv.Histograms()
 
 			returnedLabels := []string{}
-			for label, _ := range hs {
+			for label := range hs {
 				returnedLabels = append(returnedLabels, label)
 			}
 
@@ -344,11 +346,11 @@ func Test_Concurrency(t *testing.T) {
 	var wg sync.WaitGroup
 	for i := 0; i < 1000; i++ {
 		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			hv.Add("foo", 1)
-			hv.Ensure([]string{})
-		}()
+		if err := hv.Add("foo", 1); err != nil {
+			t.Fatalf("expected nil, got %v", err)
+		}
+		hv.Ensure([]string{})
+		wg.Done()
 	}
 
 	wg.Wait()
@@ -372,7 +374,8 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		go func(i int) {
 			defer writeWaitGroup.Done()
 
-			hv.Add(fmt.Sprintf("%v", i), float64(i))
+			err := hv.Add(fmt.Sprintf("%v", i), float64(i))
+			fmt.Println(err)
 		}(i)
 	}
 
