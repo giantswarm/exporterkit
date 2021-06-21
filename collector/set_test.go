@@ -22,14 +22,13 @@ func Test_Collector_Set_Boot(t *testing.T) {
 		for g := 0; g < 100; g++ {
 			wg.Add(1)
 
-			go func() {
-				defer wg.Done()
-
+			{
 				err := s.Boot(context.Background())
 				if err != nil {
 					t.Fatalf(err.Error())
 				}
-			}()
+				wg.Done()
+			}
 		}
 
 		wg.Wait()
