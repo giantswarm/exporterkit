@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgrade github.com/giantswarm/micrologger v0.5.0 to v0.6.0
 - Upgrade github.com/prometheus/client_golang v1.9.0 to v1.11.0
 - Upgrade golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e to v0.0.0-20210220032951-036812b2e83c
+- Upgrade github.com/giantswarm/architect-orb v0.7.0 to v4.8.1
 
 ## [0.2.1] 2021-02-08
 
