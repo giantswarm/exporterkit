@@ -1,6 +1,6 @@
 module github.com/giantswarm/exporterkit
 
-go 1.13
+go 1.17
 
 require (
 	github.com/giantswarm/microendpoint v0.2.0
