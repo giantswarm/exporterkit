@@ -45,7 +45,7 @@ func Example() {
 
 	// Add the samples to the HistogramVec.
 	for _, s := range firstSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		_ = hv.Add(s.StoreName, s.Temperature)
 	}
 
 	// Emit each metric, such as in a Prometheus Collector.
@@ -74,7 +74,7 @@ func Example() {
 
 	// Add the second set of sample to the HistogramVec.
 	for _, s := range secondSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		_ = hv.Add(s.StoreName, s.Temperature)
 	}
 
 	// Ensure that any stores that have shut down are removed from the HistogramVec.
