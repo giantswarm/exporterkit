@@ -380,6 +380,8 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
+	var done = make(chan bool)
+	var errors = make(chan error)
 	var writeWaitGroup sync.WaitGroup
 	for i := 0; i < 1000; i++ {
 		writeWaitGroup.Add(1)
@@ -387,7 +389,10 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		go func(i int) {
 			defer writeWaitGroup.Done()
 
-			hv.Add(fmt.Sprintf("%v", i), float64(i))
+			err := hv.Add(fmt.Sprintf("%v", i), float64(i))
+			if err != nil {
+				errors <- err
+			}
 		}(i)
 	}
 
@@ -403,6 +408,17 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		}()
 	}
 
-	writeWaitGroup.Wait()
+	go func() {
+		writeWaitGroup.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		break
+	case err := <-errors:
+		t.Fatalf("goroutine error : %v", err)
+	}
+
 	iterateWaitGroup.Wait()
 }
