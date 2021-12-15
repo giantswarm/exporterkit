@@ -341,17 +341,32 @@ func Test_Concurrency(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
+	var done = make(chan bool)
+	var errors = make(chan error)
 	var wg sync.WaitGroup
 	for i := 0; i < 1000; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			hv.Add("foo", 1)
+			err := hv.Add("foo", 1)
+			if err != nil {
+				errors <- err
+			}
 			hv.Ensure([]string{})
 		}()
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		break
+	case err := <-errors:
+		t.Fatalf("goroutine error : %v", err)
+	}
 }
 
 // Test_Multi_Write_Iteration_Concurrency tests that concurrent reading and
