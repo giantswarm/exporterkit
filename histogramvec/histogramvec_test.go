@@ -320,7 +320,7 @@ func Test_Ensure(t *testing.T) {
 			hs := hv.Histograms()
 
 			returnedLabels := []string{}
-			for label, _ := range hs {
+			for label := range hs {
 				returnedLabels = append(returnedLabels, label)
 			}
 
