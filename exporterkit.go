@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"sync"
+	"syscall"
 
 	"github.com/giantswarm/microendpoint/endpoint/healthz"
 	"github.com/giantswarm/microerror"
@@ -89,7 +90,7 @@ func (e *Exporter) Run() {
 	go newServer.Boot()
 
 	listener := make(chan os.Signal, 2)
-	signal.Notify(listener, os.Interrupt, os.Kill)
+	signal.Notify(listener, os.Interrupt, syscall.SIGTERM)
 
 	<-listener
 
