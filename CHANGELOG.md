@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2021-12-16
+
 ### Changed
 
 - Replace SIGKILL with SIGTERM signal
@@ -48,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]: https://github.com/giantswarm/exporterkit/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/giantswarm/exporterkit/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giantswarm/exporterkit/compare/v0.2.1...v3.0.0
 [0.2.1]: https://github.com/giantswarm/exporterkit/compare/v0.1.0...v0.2.0
 [0.2.0]: https://github.com/giantswarm/exporterkit/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/giantswarm/exporterkit/releases/tag/v0.1.0
