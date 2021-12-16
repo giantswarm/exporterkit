@@ -88,8 +88,6 @@ func (s *Set) Stop(ctx context.Context) {
 	}
 
 	s.logger.LogCtx(ctx, "level", "debug", "message", "stopped collector")
-
-	return
 }
 
 func (s *Set) Collect(ch chan<- prometheus.Metric) {

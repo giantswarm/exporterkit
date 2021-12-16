@@ -45,7 +45,7 @@ func Example() {
 
 	// Add the samples to the HistogramVec.
 	for _, s := range firstSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		_ = hv.Add(s.StoreName, s.Temperature)
 	}
 
 	// Emit each metric, such as in a Prometheus Collector.
@@ -74,7 +74,7 @@ func Example() {
 
 	// Add the second set of sample to the HistogramVec.
 	for _, s := range secondSamples {
-		hv.Add(s.StoreName, s.Temperature)
+		_ = hv.Add(s.StoreName, s.Temperature)
 	}
 
 	// Ensure that any stores that have shut down are removed from the HistogramVec.
@@ -320,7 +320,7 @@ func Test_Ensure(t *testing.T) {
 			hs := hv.Histograms()
 
 			returnedLabels := []string{}
-			for label, _ := range hs {
+			for label := range hs {
 				returnedLabels = append(returnedLabels, label)
 			}
 
@@ -341,17 +341,32 @@ func Test_Concurrency(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
+	var done = make(chan bool)
+	var errors = make(chan error)
 	var wg sync.WaitGroup
 	for i := 0; i < 1000; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			hv.Add("foo", 1)
+			err := hv.Add("foo", 1)
+			if err != nil {
+				errors <- err
+			}
 			hv.Ensure([]string{})
 		}()
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		break
+	case err := <-errors:
+		t.Fatalf("goroutine error : %v", err)
+	}
 }
 
 // Test_Multi_Write_Iteration_Concurrency tests that concurrent reading and
@@ -365,6 +380,8 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		t.Fatalf("expected nil, got %v", err)
 	}
 
+	var done = make(chan bool)
+	var errors = make(chan error)
 	var writeWaitGroup sync.WaitGroup
 	for i := 0; i < 1000; i++ {
 		writeWaitGroup.Add(1)
@@ -372,7 +389,10 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		go func(i int) {
 			defer writeWaitGroup.Done()
 
-			hv.Add(fmt.Sprintf("%v", i), float64(i))
+			err := hv.Add(fmt.Sprintf("%v", i), float64(i))
+			if err != nil {
+				errors <- err
+			}
 		}(i)
 	}
 
@@ -388,6 +408,17 @@ func Test_Multi_Write_Iteration_Concurrency(t *testing.T) {
 		}()
 	}
 
-	writeWaitGroup.Wait()
+	go func() {
+		writeWaitGroup.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+		break
+	case err := <-errors:
+		t.Fatalf("goroutine error : %v", err)
+	}
+
 	iterateWaitGroup.Wait()
 }
