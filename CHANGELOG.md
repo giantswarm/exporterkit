@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Replace SIGKILL with SIGTERM signal
 - Upgrade to Go 1.17
 - Upgrade github.com/giantswarm/microendpoint v0.2.0 to v1.0.0
 - Upgrade github.com/giantswarm/microerror v0.3.0 to v0.4.0
