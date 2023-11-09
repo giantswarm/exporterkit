@@ -1,6 +1,2 @@
-# pkg:golang/github.com/hashicorp/consul/api@v1.25.1
+# pkg:golang/github.com/hashicorp/consul/api@v1.26.1
 CVE-2022-29153
-
-# pkg:golang/github.com/nats-io/nats-server/v2@v2.8.4
-CVE-2022-42709
-CVE-2022-42708
