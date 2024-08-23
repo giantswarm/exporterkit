@@ -7,7 +7,7 @@ require (
 	github.com/giantswarm/microerror v0.4.1
 	github.com/giantswarm/microkit v1.0.1
 	github.com/giantswarm/micrologger v1.1.1
-	github.com/prometheus/client_golang v1.20.0
+	github.com/prometheus/client_golang v1.20.1
 	golang.org/x/sync v0.8.0
 )
 
