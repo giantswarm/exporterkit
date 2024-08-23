@@ -14,7 +14,7 @@ func Test_Collector_Set_Boot(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		s, err := newTestSet()
 		if err != nil {
-			t.Fatalf(err.Error())
+			t.Fatal(err.Error())
 		}
 
 		var wg sync.WaitGroup
@@ -25,7 +25,7 @@ func Test_Collector_Set_Boot(t *testing.T) {
 			{
 				err := s.Boot(context.Background())
 				if err != nil {
-					t.Fatalf(err.Error())
+					t.Fatal(err.Error())
 				}
 				wg.Done()
 			}
