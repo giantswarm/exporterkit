@@ -48,7 +48,7 @@ require (
 )
 
 replace (
-	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.31.1
+	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.31.2
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.25
 	github.com/nats-io/nkeys => github.com/nats-io/nkeys v0.4.10
 )
