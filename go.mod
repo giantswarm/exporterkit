@@ -26,7 +26,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/magiconair/properties v1.8.9 // indirect
-	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
@@ -51,7 +50,7 @@ require (
 )
 
 replace (
-	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.26.1
-	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.4
-	github.com/nats-io/nkeys => github.com/nats-io/nkeys v0.4.6
+	github.com/hashicorp/consul/api => github.com/hashicorp/consul/api v1.31.2
+	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.10.26
+	github.com/nats-io/nkeys => github.com/nats-io/nkeys v0.4.10
 )

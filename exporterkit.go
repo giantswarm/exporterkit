@@ -21,16 +21,18 @@ const (
 
 // Config if the configuration to create an Exporter.
 type Config struct {
-	Address    string
-	Collectors []prometheus.Collector
-	Logger     micrologger.Logger
+	Address        string
+	Collectors     []prometheus.Collector
+	ExtraEndpoints []server.Endpoint
+	Logger         micrologger.Logger
 }
 
 // Exporter runs a slice of Prometheus Collectors.
 type Exporter struct {
-	address    string
-	collectors []prometheus.Collector
-	logger     micrologger.Logger
+	address        string
+	collectors     []prometheus.Collector
+	extraEndpoints []server.Endpoint
+	logger         micrologger.Logger
 }
 
 // New creates a new Exporter, given a Config.
@@ -46,10 +48,17 @@ func New(config Config) (*Exporter, error) {
 		config.Address = DefaultAddress
 	}
 
+	for _, e := range config.ExtraEndpoints {
+		if e.Path() == healthz.Path {
+			return nil, microerror.Maskf(invalidConfigError, "%T.ExtraEndpoints: endpoints with path %q can not be added", config, healthz.Path)
+		}
+	}
+
 	exporter := Exporter{
-		address:    config.Address,
-		collectors: config.Collectors,
-		logger:     config.Logger,
+		address:        config.Address,
+		collectors:     config.Collectors,
+		extraEndpoints: config.ExtraEndpoints,
+		logger:         config.Logger,
 	}
 
 	return &exporter, nil
@@ -74,7 +83,7 @@ func (e *Exporter) Run() {
 	{
 		c := server.Config{
 			EnableDebugServer: true,
-			Endpoints:         []server.Endpoint{healthzEndpoint},
+			Endpoints:         append(e.extraEndpoints, healthzEndpoint),
 			ListenAddress:     e.address,
 			Logger:            e.logger,
 		}

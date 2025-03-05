@@ -1,6 +1,8 @@
 # DO NOT EDIT. Generated with:
 #
-#    devctl@6.14.0
+#    devctl
+#
+#    https://github.com/giantswarm/devctl/blob/fb22684ec4540f6b602968f01b4845bfb7713ee2/pkg/gen/input/makefile/internal/file/Makefile.gen.go.mk.template
 #
 
 APPLICATION    := $(shell go list -m | cut -d '/' -f 3)
@@ -61,15 +63,15 @@ $(APPLICATION)-windows-amd64.exe: $(APPLICATION)-v$(VERSION)-windows-amd64.exe
 
 $(APPLICATION)-v$(VERSION)-%-amd64: $(SOURCES)
 	@echo "====> $@"
-	CGO_ENABLED=0 GOOS=$* GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $@ .
+	CGO_ENABLED=0 GOOS=$* GOARCH=amd64 go build -trimpath -ldflags "$(LDFLAGS)" -o $@ .
 
 $(APPLICATION)-v$(VERSION)-%-arm64: $(SOURCES)
 	@echo "====> $@"
-	CGO_ENABLED=0 GOOS=$* GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o $@ .
+	CGO_ENABLED=0 GOOS=$* GOARCH=arm64 go build -trimpath -ldflags "$(LDFLAGS)" -o $@ .
 
 $(APPLICATION)-v$(VERSION)-windows-amd64.exe: $(SOURCES)
 	@echo "====> $@"
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o $@ .
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "$(LDFLAGS)" -o $@ .
 
 .PHONY: install
 install: ## Install the application.
@@ -100,7 +102,7 @@ lint: ## Runs golangci-lint.
 .PHONY: nancy
 nancy: ## Runs nancy (requires v1.0.37 or newer).
 	@echo "====> $@"
-	CGO_ENABLED=0 go list -json -m all | nancy sleuth --skip-update-check --quiet --exclude-vulnerability-file ./.nancy-ignore --additional-exclude-vulnerability-files ./.nancy-ignore.generated
+	CGO_ENABLED=0 go list -json -deps ./... | nancy sleuth --skip-update-check --quiet --exclude-vulnerability-file ./.nancy-ignore --additional-exclude-vulnerability-files ./.nancy-ignore.generated
 
 .PHONY: test
 test: ## Runs go test with default values.
