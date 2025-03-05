@@ -18,12 +18,12 @@ type Config struct {
 // See https://godoc.org/github.com/prometheus/client_golang/prometheus#MustNewConstHistogram.
 type Histogram struct {
 	// count is the number of entries added to the Histogram.
-	count uint32
+	count uint64
 	// sum is the total sum of all entries added to the Histogram.
 	sum float64
 	// buckets is a map of upper bounds to cumulative counts of entries,
 	// excluding the +Inf bucket.
-	buckets map[float64]uint32
+	buckets map[float64]uint64
 	// mutex controls access to the buckets map, to allow for safe concurrent access.
 	mutex sync.Mutex
 }
@@ -33,7 +33,7 @@ func New(config Config) (*Histogram, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.BucketLimits must not be empty", config)
 	}
 
-	buckets := map[float64]uint32{}
+	buckets := map[float64]uint64{}
 	for _, bucketLimit := range config.BucketLimits {
 		buckets[bucketLimit] = 0
 	}
@@ -80,13 +80,13 @@ func (h *Histogram) Count() uint64 {
 }
 
 func (h *Histogram) Copy() *Histogram {
-	buckets := map[float64]uint32{}
+	buckets := map[float64]uint64{}
 	for k, v := range h.Buckets() {
-		buckets[k] = uint32(v)
+		buckets[k] = uint64(v)
 	}
 
 	return &Histogram{
-		count:   uint32(h.Count()),
+		count:   uint64(h.Count()),
 		buckets: buckets,
 		sum:     h.Sum(),
 	}
