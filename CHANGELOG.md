@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0] - 2025-09-18
 
+### Changed
+
+- Update module github.com/hashicorp/consul/api to v1.32.3 (#204)
+- Update module github.com/giantswarm/microkit to v1.0.4 (#205)
+- Update module github.com/nats-io/nats-server/v2 to v2.11.9 (#203)
+- Update module github.com/prometheus/client_golang to v1.23.2 (#199)
+- Update module golang.org/x/sync to v0.17.0 (#201)
+- Update dependency go to v1.25.1 (#198)
+- Update module github.com/nats-io/nkeys to v0.4.11 (#163)
+- upgrade deps (#152)
+- Update module github.com/giantswarm/micrologger to v1.1.2 (#140)
+- Update module github.com/giantswarm/microendpoint to v1.1.1 (#139)
+
 ## [1.2.0] - 2024-04-19
 
 ### Added
