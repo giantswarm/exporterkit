@@ -10,7 +10,7 @@ require (
 	github.com/giantswarm/microkit v1.0.4
 	github.com/giantswarm/micrologger v1.1.2
 	github.com/prometheus/client_golang v1.23.2
-	golang.org/x/sync v0.18.0
+	golang.org/x/sync v0.19.0
 )
 
 require (
