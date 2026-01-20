@@ -2,7 +2,7 @@ module github.com/giantswarm/exporterkit
 
 go 1.24.0
 
-toolchain go1.25.5
+toolchain go1.25.6
 
 require (
 	github.com/giantswarm/microendpoint v1.1.2
