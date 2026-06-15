@@ -48,3 +48,11 @@ replace (
 	github.com/nats-io/nats-server/v2 => github.com/nats-io/nats-server/v2 v2.14.2
 	github.com/nats-io/nkeys => github.com/nats-io/nkeys v0.4.16
 )
+
+replace github.com/sirupsen/logrus v1.8.1 => github.com/sirupsen/logrus v1.9.4
+
+replace golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd => golang.org/x/crypto v0.53.0
+
+replace golang.org/x/net v0.43.0 => golang.org/x/net v0.56.0
+
+replace google.golang.org/grpc v1.40.0 => google.golang.org/grpc v1.81.1
