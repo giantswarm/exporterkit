@@ -9,6 +9,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+const (
+	labelFoo = "foo"
+	labelBar = "bar"
+)
+
 func Example() {
 	// Create a new descriptor with a label.
 	desc := prometheus.NewDesc(
@@ -122,12 +127,12 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 			},
 			expectedHistograms: map[string]histogram{
-				"foo": {
+				labelFoo: {
 					count: 1,
 					sum:   1,
 					buckets: map[float64]uint64{
@@ -144,23 +149,23 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					label:  labelBar,
 					sample: 2,
 				},
 			},
 			expectedHistograms: map[string]histogram{
-				"foo": {
+				labelFoo: {
 					count: 1,
 					sum:   1,
 					buckets: map[float64]uint64{
 						5: 1,
 					},
 				},
-				"bar": {
+				labelBar: {
 					count: 1,
 					sum:   2,
 					buckets: map[float64]uint64{
@@ -177,27 +182,27 @@ func Test_Add(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					label:  labelBar,
 					sample: 2,
 				},
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 2,
 				},
 			},
 			expectedHistograms: map[string]histogram{
-				"foo": {
+				labelFoo: {
 					count: 2,
 					sum:   3,
 					buckets: map[float64]uint64{
 						5: 2,
 					},
 				},
-				"bar": {
+				labelBar: {
 					count: 1,
 					sum:   2,
 					buckets: map[float64]uint64{
@@ -259,7 +264,7 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 			},
@@ -274,12 +279,12 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 			},
-			ensureLabels:   []string{"foo"},
-			expectedLabels: []string{"foo"},
+			ensureLabels:   []string{labelFoo},
+			expectedLabels: []string{labelFoo},
 		},
 
 		{
@@ -289,16 +294,16 @@ func Test_Ensure(t *testing.T) {
 			},
 			addInput: []addInput{
 				{
-					label:  "foo",
+					label:  labelFoo,
 					sample: 1,
 				},
 				{
-					label:  "bar",
+					label:  labelBar,
 					sample: 1,
 				},
 			},
-			ensureLabels:   []string{"foo"},
-			expectedLabels: []string{"foo"},
+			ensureLabels:   []string{labelFoo},
+			expectedLabels: []string{labelFoo},
 		},
 	}
 
@@ -348,7 +353,7 @@ func Test_Concurrency(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			err := hv.Add("foo", 1)
+			err := hv.Add(labelFoo, 1)
 			if err != nil {
 				errors <- err
 			}

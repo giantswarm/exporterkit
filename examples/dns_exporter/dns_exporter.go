@@ -15,6 +15,8 @@ import (
 
 const (
 	Namespace = "dns"
+
+	hostLabel = "host"
 )
 
 type Config struct {
@@ -49,19 +51,19 @@ func NewDNSCollector(config Config) (*DNSCollector, error) {
 		total: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, "", "resolution_total"),
 			"Total number of DNS resolutions.",
-			[]string{"host"},
+			[]string{hostLabel},
 			nil,
 		),
 		errorTotal: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, "", "resolution_error_total"),
 			"Total number of DNS resolution errors.",
-			[]string{"host"},
+			[]string{hostLabel},
 			nil,
 		),
 		latency: prometheus.NewDesc(
 			prometheus.BuildFQName(Namespace, "", "resolution_seconds"),
 			"Time taken to resolve DNS.",
-			[]string{"host"},
+			[]string{hostLabel},
 			nil,
 		),
 
