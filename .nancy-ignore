@@ -1,2 +1,3 @@
 CVE-2024-51744 until=2026-09-27 # github.com/golang-jwt/jwt/v4@v4.0.0
 CVE-2025-30204 until=2026-09-27 # github.com/golang-jwt/jwt/v4@v4.0.0
+CVE-2026-56854 until=2026-10-01 # golang.org/x/crypto@v0.53.0
