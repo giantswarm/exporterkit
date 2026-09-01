@@ -55,3 +55,7 @@ replace golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd => golang.org/x/c
 replace golang.org/x/net v0.43.0 => golang.org/x/net v0.56.0
 
 replace google.golang.org/grpc v1.40.0 => google.golang.org/grpc v1.81.1
+
+replace github.com/rabbitmq/amqp091-go v1.2.0 => github.com/rabbitmq/amqp091-go v1.14.0
+
+replace golang.org/x/mod v0.37.0 => golang.org/x/mod v0.40.0
