@@ -1,6 +1,6 @@
 module github.com/giantswarm/exporterkit
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.27.1
 
@@ -10,7 +10,7 @@ require (
 	github.com/giantswarm/microkit v1.0.4
 	github.com/giantswarm/micrologger v1.1.2
 	github.com/prometheus/client_golang v1.24.1
-	golang.org/x/sync v0.22.0
+	golang.org/x/sync v0.23.0
 )
 
 require (
