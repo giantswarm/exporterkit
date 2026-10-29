@@ -6,3 +6,11 @@ CVE-2026-84304 until=2026-10-30 # google.golang.org/grpc@v1.81.1
 CVE-2026-56855 until=2026-10-30 # golang.org/x/crypto@v0.53.0
 CVE-2026-78662 until=2026-10-30 # golang.org/x/crypto@v0.53.0
 CVE-2026-84445 until=2026-10-30 # google.golang.org/grpc@v1.81.1
+CVE-2026-115804 until=2026-11-27 # github.com/hashicorp/consul/api@v1.14.0 since=2026-10-28
+CVE-2026-78663 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-78669 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-97032 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-97045 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-78659 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-78660 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
+CVE-2026-78661 until=2026-11-27 # golang.org/x/net@v0.59.0 since=2026-10-28
